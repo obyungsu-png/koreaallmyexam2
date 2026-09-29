@@ -356,6 +356,10 @@ a { text-decoration: none; color: inherit; cursor: pointer; }
 .banner-arrow.prev { left: 16px; }
 .banner-arrow.next { right: 16px; }
 .banner-arrow:hover { background: #fff; color: #2db4a8; }
+/* 관리 화면에서 숨긴 배너 / 배경 이미지를 올린 배너 */
+.banner-slide.is-hidden { display: none !important; }
+.banner-slide.has-image { background-size: cover; background-position: center; }
+.banner-slide.has-image .banner-illustration { display: none; }
 
 /* Login Sidebar */
 .login-sidebar {
@@ -1237,7 +1241,7 @@ a { text-decoration: none; color: inherit; cursor: pointer; }
     <div class="icon-circle"><i class="fas fa-calendar-alt"></i></div>
     <span class="nav-label">전형일정</span>
   </div>
-  <div class="icon-nav-item">
+  <div class="icon-nav-item" onclick="openCMS()" style="cursor:pointer;">
     <div class="icon-circle"><i class="fas fa-cogs"></i></div>
     <span class="nav-label">메뉴편집</span>
   </div>
@@ -1299,7 +1303,7 @@ a { text-decoration: none; color: inherit; cursor: pointer; }
             <div class="feature-card">
               <div class="feature-icon">🌏</div>
               <div class="feature-title">3개 언어 지원</div>
-              <div class="feature-desc" translate="no">中文·English·한국어</div>
+              <div class="feature-desc">中文·English·한국어</div>
             </div>
             <div class="feature-card">
               <div class="feature-icon">📄</div>
@@ -1379,16 +1383,7 @@ a { text-decoration: none; color: inherit; cursor: pointer; }
 
       <div class="banner-arrow prev" onclick="bannerPrev()"><i class="fas fa-chevron-left"></i></div>
       <div class="banner-arrow next" onclick="bannerNext()"><i class="fas fa-chevron-right"></i></div>
-      <div class="banner-dots">
-        <span class="dot active" onclick="bannerGo(0)"></span>
-        <span class="dot" onclick="bannerGo(1)"></span>
-        <span class="dot" onclick="bannerGo(2)"></span>
-        <span class="dot" onclick="bannerGo(3)"></span>
-        <span class="dot" onclick="bannerGo(4)"></span>
-        <span class="dot" onclick="bannerGo(5)"></span>
-        <span class="dot" onclick="bannerGo(6)"></span>
-        <span class="counter" id="bannerCounter">‖ 1/7</span>
-      </div>
+      <div class="banner-dots" id="bannerDots" data-cms-skip></div>
     </div>
 
     <div class="login-sidebar">
@@ -1408,7 +1403,7 @@ a { text-decoration: none; color: inherit; cursor: pointer; }
       <div id="loginAfterBox" style="display:none;width:100%;">
         <div class="profile-row" onclick="openPage('loginOverlay')">
           <span class="profile-badge">학부모</span>
-          <span class="profile-name" translate="no">오병수</span>
+          <span class="profile-name">오병수</span>
           <i class="fas fa-chevron-right profile-arrow"></i>
         </div>
         <div class="quick-menu">
@@ -1521,27 +1516,7 @@ a { text-decoration: none; color: inherit; cursor: pointer; }
           <span class="news-tab">입학자료실</span>
           <span class="news-tab">주요일정</span>
         </div>
-        <div class="news-item">
-          <div class="news-thumb"><i class="fas fa-newspaper"></i></div>
-          <div class="news-text">
-            <div class="title">2027학년도 외국인 특별전형 주요 변경사항 총정리</div>
-            <div class="meta">2027 외국인전형</div>
-          </div>
-        </div>
-        <div class="news-item">
-          <div class="news-thumb"><i class="fas fa-file-signature"></i></div>
-          <div class="news-text">
-            <div class="title">서울 주요대 외국인 전형 모집인원 변동 안내</div>
-            <div class="meta">2027 외국인전형</div>
-          </div>
-        </div>
-        <div class="news-item">
-          <div class="news-thumb"><i class="fas fa-question-circle"></i></div>
-          <div class="news-text">
-            <div class="title">TOPIK 급수별 지원 가능 대학, 꼭 알아야 할 핵심 포인트</div>
-            <div class="meta">2027 공통</div>
-          </div>
-        </div>
+        <div id="newsList" data-cms-list="news"></div>
       </div>
     </div>
   </div>
@@ -1575,18 +1550,7 @@ a { text-decoration: none; color: inherit; cursor: pointer; }
           <span class="notice-title">공지사항</span>
           <span class="notice-more">더보기</span>
         </div>
-        <div class="notice-item">
-          <span class="notice-badge">일반</span>
-          <span class="notice-text">한국유학 포털 추천 및 대화형 AI 챗봇 서비스 오픈 안내</span>
-        </div>
-        <div class="notice-item">
-          <span class="notice-badge general">일반</span>
-          <span class="notice-text">한국유학 포털 서비스 점검 안내</span>
-        </div>
-        <div class="notice-item">
-          <span class="notice-badge general">일반</span>
-          <span class="notice-text">한국유학 포털 일부 서비스 일시중단 안내</span>
-        </div>
+        <div id="noticeList" data-cms-list="notices"></div>
       </div>
       <div class="phone-box">
         <div class="phone-label">입학상담전화</div>
@@ -2401,7 +2365,7 @@ a { text-decoration: none; color: inherit; cursor: pointer; }
             <th>★</th>
           </tr>
         </thead>
-        <tbody id="univTableBody"></tbody>
+        <tbody id="univTableBody" data-cms-list="univ"></tbody>
       </table>
       <div class="pagination" id="univPagination"></div>
     </div>
@@ -2472,7 +2436,7 @@ a { text-decoration: none; color: inherit; cursor: pointer; }
             <th>비교</th>
           </tr>
         </thead>
-        <tbody id="deptTableBody"></tbody>
+        <tbody id="deptTableBody" data-cms-list="dept"></tbody>
       </table>
       <div class="pagination" id="deptPagination"></div>
     </div>
@@ -2536,6 +2500,10 @@ a { text-decoration: none; color: inherit; cursor: pointer; }
 .data-thumb { width: 100px; height: 130px; border-radius: 8px; background: linear-gradient(135deg, #e3f2fd, #bbdefb); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 12px; color: #1976d2; font-weight: 700; text-align: center; line-height: 1.3; padding: 8px; }
 .data-thumb.green { background: linear-gradient(135deg, #e8f5e9, #c8e6c9); color: #388e3c; }
 .data-thumb.orange { background: linear-gradient(135deg, #fff3e0, #ffe0b2); color: #e65100; }
+.data-thumb.has-image { background-size: cover; background-position: center; }
+.data-info .data-file a, .notice-text a, .news-text .title a { color: inherit; }
+.data-info .data-file a:hover, .notice-text a:hover, .news-text .title a:hover { text-decoration: underline; }
+a.adm-result-btn { display: inline-block; }
 .data-info { flex: 1; }
 .data-info .data-tags { font-size: 11px; color: #888; margin-bottom: 6px; }
 .data-info .data-tags span { margin-right: 8px; }
@@ -2609,18 +2577,7 @@ a { text-decoration: none; color: inherit; cursor: pointer; }
           <th>분석 · 비교</th>
           <th>★</th>
         </tr></thead>
-        <tbody>
-          <tr><td><div class="univ-name-cell"><div class="univ-logo">가</div><span class="univ-name-text">가야대학교[본교]</span></div></td><td>간호학과(주간)</td><td><div class="region-cell"><i class="fas fa-map-marker-alt"></i>경남</div></td><td><div class="competition-cell"><div>봄 <span class="comp-su">6.78</span></div><div>가을 <span class="comp-jeong">6.77</span></div></div></td><td><a class="num-link">185</a></td><td><button class="adm-result-btn">모집요강·평가기준</button></td><td><button class="expand-btn">∨</button></td><td><button class="star-btn">★</button></td></tr>
-          <tr><td><div class="univ-name-cell"><div class="univ-logo">가</div><span class="univ-name-text">가야대학교[본교]</span></div></td><td>물리치료학과(주간)</td><td><div class="region-cell"><i class="fas fa-map-marker-alt"></i>경남</div></td><td><div class="competition-cell"><div>봄 <span class="comp-su">7.35</span></div><div>가을 <span class="comp-jeong">6.25</span></div></div></td><td><a class="num-link">56</a></td><td><button class="adm-result-btn">모집요강·평가기준</button></td><td><button class="expand-btn">∨</button></td><td><button class="star-btn">★</button></td></tr>
-          <tr><td><div class="univ-name-cell"><div class="univ-logo">가</div><span class="univ-name-text">가야대학교[본교]</span></div></td><td>방사선학과(주간)</td><td><div class="region-cell"><i class="fas fa-map-marker-alt"></i>경남</div></td><td><div class="competition-cell"><div>봄 <span class="comp-su">7.61</span></div><div>가을 <span class="comp-jeong">11.33</span></div></div></td><td><a class="num-link">45</a></td><td><button class="adm-result-btn">모집요강·평가기준</button></td><td><button class="expand-btn">∨</button></td><td><button class="star-btn">★</button></td></tr>
-          <tr><td><div class="univ-name-cell"><div class="univ-logo">가</div><span class="univ-name-text">가야대학교[본교]</span></div></td><td>사회복지상담학과(주간)</td><td><div class="region-cell"><i class="fas fa-map-marker-alt"></i>경남</div></td><td><div class="competition-cell"><div>봄 <span class="comp-su">1.03</span></div><div>가을 <span class="comp-jeong">1</span></div></div></td><td><a class="num-link">40</a></td><td><button class="adm-result-btn">모집요강·평가기준</button></td><td><button class="expand-btn">∨</button></td><td><button class="star-btn">★</button></td></tr>
-          <tr><td><div class="univ-name-cell"><div class="univ-logo">가</div><span class="univ-name-text">가야대학교[본교]</span></div></td><td>스포츠재활복지학과(주간)</td><td><div class="region-cell"><i class="fas fa-map-marker-alt"></i>경남</div></td><td><div class="competition-cell"><div>봄 <span class="comp-su">4.95</span></div><div>가을 <span class="comp-jeong">3</span></div></div></td><td><a class="num-link">40</a></td><td><button class="adm-result-btn">모집요강·평가기준</button></td><td><button class="expand-btn">∨</button></td><td><button class="star-btn">★</button></td></tr>
-          <tr><td><div class="univ-name-cell"><div class="univ-logo">가</div><span class="univ-name-text">가야대학교[본교]</span></div></td><td>자유전공학부(주간)</td><td><div class="region-cell"><i class="fas fa-map-marker-alt"></i>경남</div></td><td><div class="competition-cell"><div>봄 <span class="comp-su">0.64</span></div><div>가을 <span class="comp-jeong">1</span></div></div></td><td><a class="num-link">14</a></td><td><button class="adm-result-btn">모집요강·평가기준</button></td><td><button class="expand-btn">∨</button></td><td><button class="star-btn">★</button></td></tr>
-          <tr><td><div class="univ-name-cell"><div class="univ-logo">가</div><span class="univ-name-text">가야대학교[본교]</span></div></td><td>치유웰니스학과(주간)</td><td><div class="region-cell"><i class="fas fa-map-marker-alt"></i>경남</div></td><td><div class="competition-cell"><div>봄 <span class="comp-su">1.21</span></div><div>가을 <span class="comp-jeong">0.25</span></div></div></td><td><a class="num-link">19</a></td><td><button class="adm-result-btn">모집요강·평가기준</button></td><td><button class="expand-btn">∨</button></td><td><button class="star-btn">★</button></td></tr>
-          <tr><td><div class="univ-name-cell"><div class="univ-logo">가</div><span class="univ-name-text">가야대학교[본교]</span></div></td><td>특수교육과(주간)</td><td><div class="region-cell"><i class="fas fa-map-marker-alt"></i>경남</div></td><td><div class="competition-cell"><div>봄 <span class="comp-su">2.04</span></div><div>가을 <span class="comp-jeong">2</span></div></div></td><td><a class="num-link">26</a></td><td><button class="adm-result-btn">모집요강·평가기준</button></td><td><button class="expand-btn">∨</button></td><td><button class="star-btn">★</button></td></tr>
-          <tr><td><div class="univ-name-cell"><div class="univ-logo">가</div><span class="univ-name-text">가천대학교[본교]</span></div></td><td>AI인문대학(주간)</td><td><div class="region-cell"><i class="fas fa-map-marker-alt"></i>경기</div></td><td><div class="competition-cell"><div>봄 <span class="comp-su">36.7</span></div><div>가을 <span class="comp-jeong">12.48</span></div></div></td><td><a class="num-link">290</a></td><td><button class="adm-result-btn">모집요강·평가기준</button></td><td><button class="expand-btn">∨</button></td><td><button class="star-btn">★</button></td></tr>
-          <tr><td><div class="univ-name-cell"><div class="univ-logo">가</div><span class="univ-name-text">가천대학교[본교]</span></div></td><td>간호학과(주간)</td><td><div class="region-cell"><i class="fas fa-map-marker-alt"></i>경기</div></td><td><div class="competition-cell"><div>봄 <span class="comp-su">35.11</span></div><div>가을 <span class="comp-jeong">4.45</span></div></div></td><td><a class="num-link">337</a></td><td><button class="adm-result-btn">모집요강·평가기준</button></td><td><button class="expand-btn">∨</button></td><td><button class="star-btn">★</button></td></tr>
-        </tbody>
+        <tbody id="admTableBody" data-cms-list="adm"></tbody>
       </table>
       <div class="pagination"><button class="page-btn">«</button><button class="page-btn">‹</button><button class="page-btn active">1</button><button class="page-btn">2</button><button class="page-btn">3</button><button class="page-btn">4</button><button class="page-btn">5</button><button class="page-btn">6</button><button class="page-btn">7</button><button class="page-btn">8</button><button class="page-btn">9</button><button class="page-btn">10</button><button class="page-btn">›</button><button class="page-btn">»</button></div>
     </div>
@@ -2738,16 +2695,7 @@ a { text-decoration: none; color: inherit; cursor: pointer; }
         <div class="table-summary">총 <strong>128건</strong></div>
         <select class="table-view-select"><option>10개씩 보기</option></select>
       </div>
-      <div class="data-grid">
-        <div class="data-card"><div class="data-thumb" data-i18n="data.thumb1">2027학년도<br>외국인<br>모집요강</div><div class="data-info"><div class="data-tags"><span>2027</span> <span>모집요강, 자료집(공통)</span></div><div class="data-title">2027학년도 대학별 외국인 특별전형 모집요강 모음</div><div class="data-file">2027학년도 외국인 특별전형 모집요강 모음.zip <i class="fas fa-download"></i></div><div class="data-meta"><span>입학정보센터</span> · 2026-09-15</div></div></div>
-        <div class="data-card"><div class="data-thumb green" data-i18n="data.thumb2">TOPIK<br>안내</div><div class="data-info"><div class="data-tags"><span>2027</span> <span>어학(TOPIK)</span></div><div class="data-title">2027년 TOPIK(한국어능력시험) 시행 일정 및 해외 시험장 안내</div><div class="data-file">2027년 TOPIK 시행 안내.pdf <i class="fas fa-download"></i></div><div class="data-meta"><span>입학정보센터</span> · 2026-09-01</div></div></div>
-        <div class="data-card"><div class="data-thumb orange" data-i18n="data.thumb3">D-2<br>비자</div><div class="data-info"><div class="data-tags"><span>공통</span> <span>비자·체류</span></div><div class="data-title">D-2(유학) 비자 신청 및 외국인등록 안내</div><div class="data-file">D-2 유학비자 신청 안내.pdf <i class="fas fa-download"></i></div><div class="data-meta"><span>유학생지원팀</span> · 2026-08-20</div></div></div>
-        <div class="data-card"><div class="data-thumb orange" data-i18n="data.thumb4">장학금<br>안내</div><div class="data-info"><div class="data-tags"><span>2027</span> <span>장학금</span></div><div class="data-title">외국인 유학생 장학금 안내 (GKS 정부초청·대학별 TOPIK 장학금)</div><div class="data-file">외국인 유학생 장학금 안내.pdf <i class="fas fa-download"></i></div><div class="data-meta"><span>유학생지원팀</span> · 2026-08-20</div></div></div>
-        <div class="data-card"><div class="data-thumb" data-i18n="data.thumb5">서류<br>인증</div><div class="data-info"><div class="data-tags"><span>공통</span> <span>제출서류</span></div><div class="data-title">중국 서류 공증·아포스티유 발급 절차 안내</div><div class="data-file">중국 서류 아포스티유 안내.pdf <i class="fas fa-download"></i></div><div class="data-meta"><span>입학정보센터</span> · 2026-07-10</div></div></div>
-        <div class="data-card"><div class="data-thumb green" data-i18n="data.thumb6">건강<br>보험</div><div class="data-info"><div class="data-tags"><span>공통</span> <span>생활정보</span></div><div class="data-title">외국인 유학생 국민건강보험 가입 안내</div><div class="data-file">유학생 건강보험 안내.pdf <i class="fas fa-download"></i></div><div class="data-meta"><span>유학생지원팀</span> · 2026-06-30</div></div></div>
-        <div class="data-card"><div class="data-thumb" data-i18n="data.thumb7">자료집<br>(공통)</div><div class="data-info"><div class="data-tags"><span>2028</span> <span>자료집(공통)</span></div><div class="data-title">2028학년도 외국인 특별전형 주요사항 안내</div><div class="data-file">2028학년도 외국인 특별전형 주요사항 안내.pdf <i class="fas fa-download"></i></div><div class="data-meta"><span>입학기획팀</span> · 2026-04-30</div></div></div>
-        <div class="data-card"><div class="data-thumb green" data-i18n="data.thumb8">기숙사<br>안내</div><div class="data-info"><div class="data-tags"><span>공통</span> <span>생활정보</span></div><div class="data-title">대학별 외국인 유학생 기숙사·주거 안내</div><div class="data-file">외국인 유학생 기숙사 안내.pdf <i class="fas fa-download"></i></div><div class="data-meta"><span>유학생지원팀</span> · 2026-04-30</div></div></div>
-      </div>
+      <div class="data-grid" id="resourceList" data-cms-list="resources"></div>
       <div class="pagination"><button class="page-btn">«</button><button class="page-btn">‹</button><button class="page-btn active">1</button><button class="page-btn">2</button><button class="page-btn">3</button><button class="page-btn">4</button><button class="page-btn">5</button><button class="page-btn">6</button><button class="page-btn">7</button><button class="page-btn">8</button><button class="page-btn">9</button><button class="page-btn">10</button><button class="page-btn">›</button><button class="page-btn">»</button></div>
     </div>
   </div>
@@ -3298,7 +3246,7 @@ a { text-decoration: none; color: inherit; cursor: pointer; }
           </div>
           <table class="guide-mini-table">
             <thead><tr><th>번호</th><th>국가</th><th>학교명</th><th>기간</th></tr></thead>
-            <tbody><tr><td>1</td><td>중국</td><td translate="no">○○高级中学</td><td>3년</td></tr></tbody>
+            <tbody><tr><td>1</td><td>중국</td><td>○○高级中学</td><td>3년</td></tr></tbody>
           </table>
         </div>
       </div>
@@ -4405,58 +4353,166 @@ const deptData = [
   { dept:'경영학과', univ:'한양대학교 [본교]', region:'서울', su:'18.7', jeong:'10.3', capacity:120 },
 ];
 
+/* ====== 전형정보 표 데이터 ====== */
+const admData = [
+  { univ:'가야대학교[본교]', dept:'간호학과(주간)', region:'경남', spring:'6.78', fall:'6.77', count:'185', file:'' },
+  { univ:'가야대학교[본교]', dept:'물리치료학과(주간)', region:'경남', spring:'7.35', fall:'6.25', count:'56', file:'' },
+  { univ:'가야대학교[본교]', dept:'방사선학과(주간)', region:'경남', spring:'7.61', fall:'11.33', count:'45', file:'' },
+  { univ:'가야대학교[본교]', dept:'사회복지상담학과(주간)', region:'경남', spring:'1.03', fall:'1', count:'40', file:'' },
+  { univ:'가야대학교[본교]', dept:'스포츠재활복지학과(주간)', region:'경남', spring:'4.95', fall:'3', count:'40', file:'' },
+  { univ:'가야대학교[본교]', dept:'자유전공학부(주간)', region:'경남', spring:'0.64', fall:'1', count:'14', file:'' },
+  { univ:'가야대학교[본교]', dept:'치유웰니스학과(주간)', region:'경남', spring:'1.21', fall:'0.25', count:'19', file:'' },
+  { univ:'가야대학교[본교]', dept:'특수교육과(주간)', region:'경남', spring:'2.04', fall:'2', count:'26', file:'' },
+  { univ:'가천대학교[본교]', dept:'AI인문대학(주간)', region:'경기', spring:'36.7', fall:'12.48', count:'290', file:'' },
+  { univ:'가천대학교[본교]', dept:'간호학과(주간)', region:'경기', spring:'35.11', fall:'4.45', count:'337', file:'' },
+];
+
+/* ====== 메인 목록 데이터 ====== */
+const noticeData = [
+  { badge:'일반', style:'blue', text:'한국유학 포털 추천 및 대화형 AI 챗봇 서비스 오픈 안내', link:'' },
+  { badge:'일반', style:'green', text:'한국유학 포털 서비스 점검 안내', link:'' },
+  { badge:'일반', style:'green', text:'한국유학 포털 일부 서비스 일시중단 안내', link:'' },
+];
+const newsData = [
+  { icon:'newspaper', title:'2027학년도 외국인 특별전형 주요 변경사항 총정리', meta:'2027 외국인전형', link:'' },
+  { icon:'file-signature', title:'서울 주요대 외국인 전형 모집인원 변동 안내', meta:'2027 외국인전형', link:'' },
+  { icon:'question-circle', title:'TOPIK 급수별 지원 가능 대학, 꼭 알아야 할 핵심 포인트', meta:'2027 공통', link:'' },
+];
+const resourceData = [
+  { color:'blue', image:'', thumb:{ ko:'2027학년도\n외국인\n모집요강', zh:'2027学年度\n外国人\n招生简章', en:'2027\nIntl.\nGuidelines' }, year:'2027', tags:'모집요강, 자료집(공통)', title:'2027학년도 대학별 외국인 특별전형 모집요강 모음', fileName:'2027학년도 외국인 특별전형 모집요강 모음.zip', file:'', team:'입학정보센터', date:'2026-09-15' },
+  { color:'green', image:'', thumb:{ ko:'TOPIK\n안내', zh:'TOPIK\n指南', en:'TOPIK\nGuide' }, year:'2027', tags:'어학(TOPIK)', title:'2027년 TOPIK(한국어능력시험) 시행 일정 및 해외 시험장 안내', fileName:'2027년 TOPIK 시행 안내.pdf', file:'', team:'입학정보센터', date:'2026-09-01' },
+  { color:'orange', image:'', thumb:{ ko:'D-2\n비자', zh:'D-2\n签证', en:'D-2\nVisa' }, year:'공통', tags:'비자·체류', title:'D-2(유학) 비자 신청 및 외국인등록 안내', fileName:'D-2 유학비자 신청 안내.pdf', file:'', team:'유학생지원팀', date:'2026-08-20' },
+  { color:'orange', image:'', thumb:{ ko:'장학금\n안내', zh:'奖学金\n指南', en:'Scholarship\nGuide' }, year:'2027', tags:'장학금', title:'외국인 유학생 장학금 안내 (GKS 정부초청·대학별 TOPIK 장학금)', fileName:'외국인 유학생 장학금 안내.pdf', file:'', team:'유학생지원팀', date:'2026-08-20' },
+  { color:'blue', image:'', thumb:{ ko:'서류\n인증', zh:'材料\n认证', en:'Apostille\nGuide' }, year:'공통', tags:'제출서류', title:'중국 서류 공증·아포스티유 발급 절차 안내', fileName:'중국 서류 아포스티유 안내.pdf', file:'', team:'입학정보센터', date:'2026-07-10' },
+  { color:'green', image:'', thumb:{ ko:'건강\n보험', zh:'健康\n保险', en:'Health\nInsurance' }, year:'공통', tags:'생활정보', title:'외국인 유학생 국민건강보험 가입 안내', fileName:'유학생 건강보험 안내.pdf', file:'', team:'유학생지원팀', date:'2026-06-30' },
+  { color:'blue', image:'', thumb:{ ko:'자료집\n(공통)', zh:'资料集\n（通用）', en:'Handbook\n(General)' }, year:'2028', tags:'자료집(공통)', title:'2028학년도 외국인 특별전형 주요사항 안내', fileName:'2028학년도 외국인 특별전형 주요사항 안내.pdf', file:'', team:'입학기획팀', date:'2026-04-30' },
+  { color:'green', image:'', thumb:{ ko:'기숙사\n안내', zh:'宿舍\n指南', en:'Dorm\nGuide' }, year:'공통', tags:'생활정보', title:'대학별 외국인 유학생 기숙사·주거 안내', fileName:'외국인 유학생 기숙사 안내.pdf', file:'', team:'유학생지원팀', date:'2026-04-30' },
+];
+
+/* 관리 화면(메뉴편집)에서 수정하면 content.json 의 lists 값이 이 기본값 대신 쓰입니다 */
+const DEFAULT_LISTS = { notices: noticeData, news: newsData, resources: resourceData, adm: admData, univ: univData, dept: deptData };
+const LISTS = { ...DEFAULT_LISTS };
+
+/* ====== 목록 렌더링 공통 ====== */
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+/* 링크 주소: http(s)·mailto·tel 또는 사이트 안의 경로만 허용 */
+function safeUrl(u) {
+  u = String(u || '').trim();
+  const scheme = u.match(/^([a-z][a-z0-9+.-]*):/i);
+  return scheme && !['http', 'https', 'mailto', 'tel', 'blob'].includes(scheme[1].toLowerCase()) ? '' : u;
+}
+/* 업로드 직후(사이트 반영 전) 관리자 화면에서는 미리보기 주소를 사용 */
+const mediaUrl = p => (window.CMS_PREVIEW && window.CMS_PREVIEW[p]) || p;
+const cssUrl = p => encodeURI(mediaUrl(safeUrl(p))).replace(/[()']/g, c => '%' + c.charCodeAt(0).toString(16));
+function linkWrap(url, html) {
+  url = safeUrl(url);
+  return url ? `<a href="${esc(mediaUrl(url))}" target="_blank" rel="noopener">${html}</a>` : html;
+}
+const THUMB_COLORS = { blue: '', green: ' green', orange: ' orange' };
+
+function renderNotices() {
+  document.getElementById('noticeList').innerHTML = LISTS.notices.map((n, i) => `
+    <div class="notice-item" data-cms-index="${i}">
+      <span class="notice-badge${n.style === 'green' ? ' general' : ''}">${esc(L(n.badge))}</span>
+      <span class="notice-text">${linkWrap(n.link, esc(L(n.text)))}</span>
+    </div>`).join('');
+}
+
+function renderNews() {
+  document.getElementById('newsList').innerHTML = LISTS.news.map((n, i) => `
+    <div class="news-item" data-cms-index="${i}">
+      <div class="news-thumb"><i class="fas fa-${esc(n.icon || 'newspaper')}"></i></div>
+      <div class="news-text">
+        <div class="title">${linkWrap(n.link, esc(L(n.title)))}</div>
+        <div class="meta">${esc(L(n.meta))}</div>
+      </div>
+    </div>`).join('');
+}
+
+function renderResources() {
+  document.getElementById('resourceList').innerHTML = LISTS.resources.map((r, i) => {
+    const thumb = r.image
+      ? `<div class="data-thumb has-image" style="background-image:url('${cssUrl(r.image)}')"></div>`
+      : `<div class="data-thumb${THUMB_COLORS[r.color] || ''}">${esc(L(r.thumb)).replace(/\n/g, '<br>')}</div>`;
+    return `<div class="data-card" data-cms-index="${i}">${thumb}<div class="data-info"><div class="data-tags"><span>${esc(L(r.year))}</span> <span>${esc(L(r.tags))}</span></div><div class="data-title">${esc(L(r.title))}</div><div class="data-file">${linkWrap(r.file, esc(L(r.fileName)) + ' <i class="fas fa-download"></i>')}</div><div class="data-meta"><span>${esc(L(r.team))}</span> · ${esc(r.date)}</div></div></div>`;
+  }).join('');
+}
+
+function renderAdmTable() {
+  document.getElementById('admTableBody').innerHTML = LISTS.adm.map((d, i) => {
+    const univ = L(d.univ), url = safeUrl(d.file);
+    const guide = url
+      ? `<a class="adm-result-btn" href="${esc(mediaUrl(url))}" target="_blank" rel="noopener">${esc(t('모집요강·평가기준'))}</a>`
+      : `<button class="adm-result-btn">${esc(t('모집요강·평가기준'))}</button>`;
+    return `<tr data-cms-index="${i}"><td><div class="univ-name-cell"><div class="univ-logo">${esc(univ.charAt(0))}</div><span class="univ-name-text">${esc(univ)}</span></div></td><td>${esc(L(d.dept))}</td><td><div class="region-cell"><i class="fas fa-map-marker-alt"></i>${esc(L(d.region))}</div></td><td><div class="competition-cell"><div>${esc(t('봄'))} <span class="comp-su">${esc(d.spring)}</span></div><div>${esc(t('가을'))} <span class="comp-jeong">${esc(d.fall)}</span></div></div></td><td><a class="num-link">${esc(d.count)}</a></td><td>${guide}</td><td><button class="expand-btn">∨</button></td><td><button class="star-btn">★</button></td></tr>`;
+  }).join('');
+}
+
 const ROWS_PER_PAGE = 10;
 let univPage = 0, deptPage = 0; // 0 = 아직 렌더링 전 (언어 변경 시 다시 그리기용)
+const clampPage = (page, len) => Math.min(Math.max(1, page), Math.max(1, Math.ceil(len / ROWS_PER_PAGE)));
 
 /* ====== 대학 테이블 렌더 ====== */
 function renderUnivTable(page) {
+  page = clampPage(page, LISTS.univ.length);
   const start = (page-1)*ROWS_PER_PAGE;
-  const rows = univData.slice(start, start+ROWS_PER_PAGE);
+  const rows = LISTS.univ.slice(start, start+ROWS_PER_PAGE);
   const body = document.getElementById('univTableBody');
   univPage = page;
-  body.innerHTML = rows.map(d => `
-    <tr>
+  body.innerHTML = rows.map((d, i) => `
+    <tr data-cms-index="${start + i}">
       <td><div class="univ-name-cell">
-        <div class="univ-logo">${t(d.name).charAt(0)}</div>
-        <span class="univ-name-text">${t(d.name)}</span>
+        <div class="univ-logo">${esc(L(d.name).charAt(0))}</div>
+        <span class="univ-name-text">${esc(L(d.name))}</span>
       </div></td>
-      <td><div class="region-cell"><i class="fas fa-map-marker-alt"></i>${t(d.region)}</div></td>
+      <td><div class="region-cell"><i class="fas fa-map-marker-alt"></i>${esc(L(d.region))}</div></td>
       <td><div class="competition-cell">
-        <div>${t('봄')} <span class="comp-su">${d.su}</span></div>
-        <div>${t('가을')} <span class="comp-jeong">${d.jeong}</span></div>
+        <div>${esc(t('봄'))} <span class="comp-su">${esc(d.su)}</span></div>
+        <div>${esc(t('가을'))} <span class="comp-jeong">${esc(d.jeong)}</span></div>
       </div></td>
-      <td><a class="num-link" href="#">${d.capacity.toLocaleString()}</a></td>
-      <td><a class="num-link" href="#">${d.dept}</a></td>
-      <td><a class="num-link" href="#">${d.adm}</a></td>
-      <td><button class="compare-btn">${t('✓ 비교')}</button></td>
+      <td><a class="num-link" href="#">${Number(d.capacity).toLocaleString()}</a></td>
+      <td><a class="num-link" href="#">${esc(d.dept)}</a></td>
+      <td><a class="num-link" href="#">${esc(d.adm)}</a></td>
+      <td><button class="compare-btn">${esc(t('✓ 비교'))}</button></td>
       <td><button class="star-btn">★</button></td>
     </tr>`).join('');
-  renderPagination('univPagination', page, Math.ceil(univData.length/ROWS_PER_PAGE), renderUnivTable);
+  renderPagination('univPagination', page, Math.ceil(LISTS.univ.length/ROWS_PER_PAGE), renderUnivTable);
 }
 
 /* ====== 학과 테이블 렌더 ====== */
 function renderDeptTable(page) {
+  page = clampPage(page, LISTS.dept.length);
   const start = (page-1)*ROWS_PER_PAGE;
-  const rows = deptData.slice(start, start+ROWS_PER_PAGE);
+  const rows = LISTS.dept.slice(start, start+ROWS_PER_PAGE);
   const body = document.getElementById('deptTableBody');
   deptPage = page;
-  body.innerHTML = rows.map(d => `
-    <tr>
-      <td style="text-align:left;font-weight:600;">${t(d.dept)}</td>
+  body.innerHTML = rows.map((d, i) => `
+    <tr data-cms-index="${start + i}">
+      <td style="text-align:left;font-weight:600;">${esc(L(d.dept))}</td>
       <td><div class="univ-name-cell" style="justify-content:center;">
-        <div class="univ-logo" style="width:28px;height:28px;font-size:11px;">${t(d.univ).charAt(0)}</div>
-        <span style="font-size:12px;">${t(d.univ)}</span>
+        <div class="univ-logo" style="width:28px;height:28px;font-size:11px;">${esc(L(d.univ).charAt(0))}</div>
+        <span style="font-size:12px;">${esc(L(d.univ))}</span>
       </div></td>
-      <td><div class="region-cell"><i class="fas fa-map-marker-alt"></i>${t(d.region)}</div></td>
+      <td><div class="region-cell"><i class="fas fa-map-marker-alt"></i>${esc(L(d.region))}</div></td>
       <td><div class="competition-cell">
-        <div>${t('봄')} <span class="comp-su">${d.su}</span></div>
-        <div>${t('가을')} <span class="comp-jeong">${d.jeong}</span></div>
+        <div>${esc(t('봄'))} <span class="comp-su">${esc(d.su)}</span></div>
+        <div>${esc(t('가을'))} <span class="comp-jeong">${esc(d.jeong)}</span></div>
       </div></td>
-      <td><a class="num-link" href="#">${d.capacity}</a></td>
-      <td><button class="result-btn">${t('입학결과')}</button></td>
-      <td><button class="compare-btn">${t('✓ 비교')}</button></td>
+      <td><a class="num-link" href="#">${esc(d.capacity)}</a></td>
+      <td><button class="result-btn">${esc(t('입학결과'))}</button></td>
+      <td><button class="compare-btn">${esc(t('✓ 비교'))}</button></td>
     </tr>`).join('');
-  renderPagination('deptPagination', page, Math.ceil(deptData.length/ROWS_PER_PAGE), renderDeptTable);
+  renderPagination('deptPagination', page, Math.ceil(LISTS.dept.length/ROWS_PER_PAGE), renderDeptTable);
+}
+
+/* 언어 변경·관리자 수정 후 목록 다시 그리기 */
+function renderSiteLists() {
+  renderNotices();
+  renderNews();
+  renderResources();
+  renderAdmTable();
+  if (univPage) renderUnivTable(univPage);
+  if (deptPage) renderDeptTable(deptPage);
 }
 
 /* ====== 페이지네이션 ====== */
@@ -4525,35 +4581,54 @@ function logoutUser() {
 
 /* ====== 배너 슬라이더 ====== */
 let currentSlide = 0;
-const totalSlides = 7;
 let slideInterval;
+let bannerPaused = false; // 관리 화면 편집 모드에서는 자동 넘김을 멈춤
+const bannerSlides = () => [...document.querySelectorAll('.banner-slide')];
+
+/* 숨기지 않은 배너 번호 목록 */
+function visibleSlides() {
+  const vis = bannerSlides().map((s, i) => s.classList.contains('is-hidden') ? -1 : i).filter(i => i >= 0);
+  return vis.length ? vis : [0];
+}
 
 function bannerGo(idx) {
+  const vis = visibleSlides();
+  if (!vis.includes(idx)) idx = vis[0];
   currentSlide = idx;
-  document.querySelectorAll('.banner-slide').forEach((s,i) => {
-    s.classList.toggle('active', i === idx);
-  });
-  document.querySelectorAll('.banner-dots .dot').forEach((d,i) => {
-    d.classList.toggle('active', i === idx);
-  });
-  document.getElementById('bannerCounter').textContent = `‖ ${idx+1}/${totalSlides}`;
+  bannerSlides().forEach((s, i) => s.classList.toggle('active', i === idx));
+  document.getElementById('bannerDots').innerHTML =
+    vis.map(i => `<span class="dot${i === idx ? ' active' : ''}" onclick="bannerGo(${i})"></span>`).join('') +
+    `<span class="counter">‖ ${vis.indexOf(idx) + 1}/${vis.length}</span>`;
   resetSlideTimer();
 }
 
 function bannerNext() {
-  bannerGo((currentSlide + 1) % totalSlides);
+  const vis = visibleSlides();
+  bannerGo(vis[(vis.indexOf(currentSlide) + 1) % vis.length]);
 }
 
 function bannerPrev() {
-  bannerGo((currentSlide - 1 + totalSlides) % totalSlides);
+  const vis = visibleSlides();
+  bannerGo(vis[(vis.indexOf(currentSlide) - 1 + vis.length) % vis.length]);
 }
 
 function resetSlideTimer() {
   clearInterval(slideInterval);
-  slideInterval = setInterval(bannerNext, 5000);
+  if (!bannerPaused) slideInterval = setInterval(bannerNext, 5000);
 }
 
-resetSlideTimer();
+/* 배너 설정(관리 화면): { 배너번호: { hidden: 숨김 여부, image: 배경 이미지 경로 } } */
+function applyBanners(settings) {
+  bannerSlides().forEach((s, i) => {
+    const b = settings[i] || {};
+    s.classList.toggle('is-hidden', !!b.hidden);
+    s.classList.toggle('has-image', !!b.image);
+    s.style.backgroundImage = b.image ? `url('${cssUrl(b.image)}')` : '';
+  });
+  bannerGo(currentSlide);
+}
+
+bannerGo(0);
 </script>
 
 <!-- ===== 다국어 지원 (中文 / English / 한국어) ===== -->
@@ -4564,6 +4639,7 @@ resetSlideTimer();
  *  - 태그가 섞인 문단 : 요소에 data-i18n="키" 를 붙이고, 사전의 같은 키에 HTML 번역을 적습니다.
  *  - JS로 만드는 문구 : t('한국어') 로 감쌉니다.
  * 원문을 고치면 사전의 키도 같이 고쳐야 번역이 유지됩니다(없으면 한국어로 표시).
+ * 사이트 운영 중 문구 수정은 '메뉴편집'(관리 화면)에서 하면 content.json 으로 저장되어 이 사전 위에 덮어씁니다.
  */
 const LANGS = ['zh', 'en', 'ko'];          // 화면 표시 순서: 중국어 / 영어 / 한국어
 const DEFAULT_LANG = 'zh';
@@ -5216,38 +5292,6 @@ const I18N = {
     zh: "<strong>오병수</strong>，您好！要分析高中成绩，需要先<a href=\"#\" style=\"color:#2db4a8;font-weight:600;\">录入高中成绩</a>。（请参考录入指南。）→",
     en: "Hello, <strong>오병수</strong>! To analyze your high school grades, please <a href=\"#\" style=\"color:#2db4a8;font-weight:600;\">enter your grades</a> first. (See the entry guide.) →"
   },
-  "data.thumb1": {
-    zh: "2027学年度<br>外国人<br>招生简章",
-    en: "2027<br>Intl.<br>Guidelines"
-  },
-  "data.thumb2": {
-    zh: "TOPIK<br>指南",
-    en: "TOPIK<br>Guide"
-  },
-  "data.thumb3": {
-    zh: "D-2<br>签证",
-    en: "D-2<br>Visa"
-  },
-  "data.thumb4": {
-    zh: "奖学金<br>指南",
-    en: "Scholarship<br>Guide"
-  },
-  "data.thumb5": {
-    zh: "材料<br>认证",
-    en: "Apostille<br>Guide"
-  },
-  "data.thumb6": {
-    zh: "健康<br>保险",
-    en: "Health<br>Insurance"
-  },
-  "data.thumb7": {
-    zh: "资料集<br>（通用）",
-    en: "Handbook<br>(General)"
-  },
-  "data.thumb8": {
-    zh: "宿舍<br>指南",
-    en: "Dorm<br>Guide"
-  },
   "consult.warning": {
     zh: "※ 报名期间（春季入学：一般为9～11月；秋季入学：一般为3～5月）咨询量增加，回复可能会延迟。<br>提问时建议将多个问题分开提交，这样可以更快得到回复，敬请参考。",
     en: "※ During application periods (Spring entry: usually Sep–Nov; Fall entry: usually Mar–May), replies may be delayed due to high demand.<br>Splitting several questions into separate requests will get you faster answers."
@@ -5321,38 +5365,49 @@ const I18N = {
 let currentLang = 'ko';                     // HTML 원문 언어
 const i18nNorm = str => str.replace(/\s+/g, ' ').trim();
 
+/* 관리 화면(메뉴편집)에서 고친 한국어 문구: { 원문 키: 새 한국어 } */
+const KO_OVERRIDE = {};
+
 /* 캠퍼스 표기: '고려대학교[본교]' → '高丽大学（本校）' / 'Korea University (Main Campus)' */
-function translateText(ko, lang) {
+function translateText(ko, lang, dict = I18N) {
   const key = i18nNorm(ko);
-  const entry = I18N[key];
+  const entry = dict[key];
   if (entry && entry[lang] != null) return entry[lang];
   let m = key.match(/^([\d,]+)건$/);
   if (m) return lang === 'zh' ? m[1] + ' 条' : m[1];
   m = key.match(/^(.+?)\s*\[(.+)\]$/);
-  if (m && I18N[m[1]] && I18N[m[2]]) {
-    return lang === 'zh' ? `${I18N[m[1]].zh}（${I18N[m[2]].zh}）` : `${I18N[m[1]].en} (${I18N[m[2]].en})`;
+  if (m && dict[m[1]] && dict[m[2]]) {
+    return lang === 'zh' ? `${dict[m[1]].zh}（${dict[m[2]].zh}）` : `${dict[m[1]].en} (${dict[m[2]].en})`;
   }
   return null;
 }
 function t(ko) {
-  if (currentLang === 'ko') return ko;
-  const tr = translateText(ko, currentLang);
-  return tr == null ? ko : tr;
+  const key = i18nNorm(ko);
+  const koText = KO_OVERRIDE[key] != null ? KO_OVERRIDE[key] : ko;
+  if (currentLang === 'ko') return koText;
+  const tr = translateText(key, currentLang);
+  return tr == null ? koText : tr;
+}
+/* 목록 데이터의 다국어 값: '한국어' 문자열(사전으로 번역) 또는 { ko, zh, en } */
+function L(v) {
+  if (v == null) return '';
+  if (typeof v !== 'object') return t(String(v));
+  if (currentLang === 'ko') return v.ko || '';
+  return v[currentLang] || t(v.ko || '');
 }
 
+/* 화면의 모든 문구를 등록 (번역 + 관리 화면 편집 대상) */
 const i18nBlocks = [], i18nTexts = [], i18nAttrs = [];
+const I18N_SKIP = 'script, style, [data-i18n], [translate="no"], [data-cms-list], [data-cms-skip]';
 function collectI18n() {
   document.querySelectorAll('[data-i18n]').forEach(el => i18nBlocks.push([el, el.innerHTML]));
   const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
   while (walker.nextNode()) {
     const node = walker.currentNode;
-    if (node.parentElement.closest('script, style, [data-i18n], [translate="no"]')) continue;
-    if (translateText(node.nodeValue, 'en') != null) i18nTexts.push([node, node.nodeValue]);
+    if (!node.nodeValue.trim() || node.parentElement.closest(I18N_SKIP)) continue;
+    i18nTexts.push([node, node.nodeValue]);
   }
-  document.querySelectorAll('[placeholder]').forEach(el => {
-    const ko = el.getAttribute('placeholder');
-    if (translateText(ko, 'en') != null) i18nAttrs.push([el, 'placeholder', ko]);
-  });
+  document.querySelectorAll('[placeholder]').forEach(el => i18nAttrs.push([el, 'placeholder', el.getAttribute('placeholder')]));
 }
 
 function setLang(lang) {
@@ -5361,23 +5416,19 @@ function setLang(lang) {
   document.documentElement.lang = HTML_LANG[lang];
 
   i18nBlocks.forEach(([el, ko]) => {
-    const entry = I18N[el.dataset.i18n];
-    el.innerHTML = lang !== 'ko' && entry && entry[lang] != null ? entry[lang] : ko;
+    const key = el.dataset.i18n, entry = I18N[key];
+    const koHtml = KO_OVERRIDE[key] != null ? KO_OVERRIDE[key] : ko;
+    el.innerHTML = lang !== 'ko' && entry && entry[lang] != null ? entry[lang] : koHtml;
   });
   i18nTexts.forEach(([node, ko]) => {
     const [, lead, trail] = ko.match(/^(\s*)[\s\S]*?(\s*)$/);
-    node.nodeValue = lang === 'ko' ? ko : lead + t(ko) + trail;
+    node.nodeValue = lead + t(i18nNorm(ko)) + trail;
   });
   i18nAttrs.forEach(([el, attr, ko]) => el.setAttribute(attr, t(ko)));
   document.title = t('한국유학 One Stop 서비스');
 
-  // 대학 로고 글자는 번역된 이름의 첫 글자로 맞춤
-  document.querySelectorAll('#admOverlay .univ-name-cell').forEach(cell => {
-    cell.querySelector('.univ-logo').textContent = cell.querySelector('.univ-name-text').textContent.trim().charAt(0);
-  });
   // JS로 그리는 영역 다시 그리기
-  if (univPage) renderUnivTable(univPage);
-  if (deptPage) renderDeptTable(deptPage);
+  renderSiteLists();
   renderGuideTitle();
 
   document.querySelectorAll('.lang-switch button').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
@@ -5390,11 +5441,66 @@ function openApplyVideos() {
   window.open('https://www.youtube.com/results?search_query=' + encodeURIComponent(q[currentLang]), '_blank');
 }
 
+/* ====== 사이트 콘텐츠 (관리 화면에서 게시한 content.json) ======
+ * { texts: { 키: { ko, zh, en } }, lists: { notices, news, resources, adm, univ, dept },
+ *   banners: { 배너번호: { hidden, image } }, media: [업로드 파일 목록] }
+ */
+const BASE_I18N = JSON.parse(JSON.stringify(I18N));
+let SITE_CONTENT = {};
+function applySiteContent(content) {
+  SITE_CONTENT = content || {};
+  Object.keys(I18N).forEach(k => delete I18N[k]);
+  Object.assign(I18N, JSON.parse(JSON.stringify(BASE_I18N)));
+  Object.keys(KO_OVERRIDE).forEach(k => delete KO_OVERRIDE[k]);
+  Object.entries(SITE_CONTENT.texts || {}).forEach(([key, v]) => {
+    if (v.ko != null) KO_OVERRIDE[key] = v.ko;
+    const entry = I18N[key] = { ...I18N[key] };
+    if (v.zh != null) entry.zh = v.zh;
+    if (v.en != null) entry.en = v.en;
+  });
+  Object.keys(DEFAULT_LISTS).forEach(name => {
+    const list = SITE_CONTENT.lists && SITE_CONTENT.lists[name];
+    LISTS[name] = Array.isArray(list) ? list : DEFAULT_LISTS[name];
+  });
+  applyBanners(SITE_CONTENT.banners || {});
+  setLang(currentLang);
+}
+function loadSiteContent() {
+  if (location.protocol === 'file:') return Promise.resolve(null); // 로컬 파일로 열면 기본 내용 사용
+  return fetch('content.json?v=' + Date.now(), { cache: 'no-store' })
+    .then(r => (r.ok ? r.json() : null))
+    .catch(() => null);
+}
+
+/* ====== 관리 화면 (메뉴편집) : cms.js 를 필요할 때만 불러옴 ====== */
+function loadCMS() {
+  if (window.CMS) return Promise.resolve(window.CMS);
+  return new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = 'cms.js?v=1';
+    s.onload = () => resolve(window.CMS);
+    s.onerror = reject;
+    document.head.appendChild(s);
+  });
+}
+function openCMS() {
+  loadCMS().then(cms => cms.open()).catch(() => alert('관리 화면(cms.js)을 불러오지 못했습니다.'));
+}
+
+let siteContentReady;
 (function initI18n() {
   collectI18n();
   let saved = null;
   try { saved = localStorage.getItem('lang'); } catch (e) {}
   setLang(new URLSearchParams(location.search).get('lang') || saved || DEFAULT_LANG);
+
+  siteContentReady = loadSiteContent().then(content => {
+    if (content) applySiteContent(content);
+    let draft = null;
+    try { draft = localStorage.getItem('cms-draft'); } catch (e) {}
+    if (draft) loadCMS().then(cms => cms.resumeDraft()).catch(() => {}); // 관리자가 게시 전 수정 중이던 내용
+    return content || {};
+  });
 })();
 </script>
 
